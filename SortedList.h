@@ -78,6 +78,11 @@ namespace mtm {
             current_node = current_node.next;
             return *this;
         }
+        ConstIterator& operator=(const ConstIterator& Iterator) = default;
+        ConstIterator(const ConstIterator& Iterator) = default;
+        bool operator!=(const ConstIterator Iterator){
+            return !(*this == Iterator);
+        }
         /**
          * the class should support the following public interface:
          * if needed, use =defualt / =delete
