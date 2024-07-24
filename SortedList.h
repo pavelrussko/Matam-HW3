@@ -27,7 +27,7 @@ namespace mtm {
         SortedList apply(Reshape r) const;
         SortedList();
         int length();
-        void insert(T &);
+        void insert(const T &);
 
         class ConstIterator;
 
@@ -86,7 +86,7 @@ namespace mtm {
 
     //SortedList implementation
     template<class T>
-    SortedList<T>::SortedList() : Head(new Node), size(0) {
+    SortedList<T>::SortedList() : Head(nullptr), size(0) {
         Head->next = nullptr;
     }
 
@@ -97,20 +97,16 @@ namespace mtm {
 
     template<class T>
     typename SortedList<T>::ConstIterator SortedList<T>::begin() const {
-        return ConstIterator(this, &Head);
+        return ConstIterator(this, Head);
     }
 
     template<class T>
     typename SortedList<T>::ConstIterator SortedList<T>::end() const {
-        Node current = Head;
-        for (int i = 0; i < size; ++i) {
-            current = current.next;
-        }
-        return ConstIterator(this, &current);
+        return ConstIterator(this, nullptr);
     }
 
     template<class T>
-    void SortedList<T>::insert(T &element) {
+    void SortedList<T>::insert(const T &element) {
         if (size == 0) {
             Head->data = element;
         } else if (element >= Head->data) {
@@ -133,7 +129,7 @@ namespace mtm {
     template<class T>
     void SortedList<T>::Remove(SortedList::ConstIterator iterator) {
         if (Head == nullptr || iterator.current_node == nullptr) {
-            //error handling
+            // Handle error appropriately
         }
 
         if (Head == iterator.current_node) {
@@ -157,6 +153,7 @@ namespace mtm {
         }
     }
 
+
     template<class T>
     SortedList<T>::~SortedList() {
         while (Head != nullptr) {
@@ -170,9 +167,9 @@ namespace mtm {
     template<class Condition>
     SortedList<T> SortedList<T>::filter(Condition c) const {
         SortedList filtered;
-        for (const T &element: *this) {
-            if (c(element)) {
-                filtered.insert(element);
+        for (ConstIterator it = begin(); it != end(); ++it) {
+            if (c(*it)) {
+                filtered.insert(*it);
             }
         }
         return filtered;
@@ -181,9 +178,9 @@ namespace mtm {
     template<class T>
     template<class Reshape>
     SortedList<T> SortedList<T>::apply(Reshape r) const {
-        SortedList reshaped(*this);
-        for (const T &element: reshaped) {
-            element = r(element);
+        SortedList reshaped;
+        for (ConstIterator it = begin(); it != end(); ++it) {
+            reshaped.insert(r(*it));
         }
         return reshaped;
     }
@@ -194,7 +191,6 @@ namespace mtm {
             return *this;
         }
 
-        // Clear current list
         while (Head != nullptr) {
             Node *temp = Head;
             Head = Head->next;
@@ -204,7 +200,8 @@ namespace mtm {
 
         for (SortedList<T>::ConstIterator it = list.begin();
              it != list.end(); ++it) {
-            insert(*it);
+            T element = *it;
+            insert(element);
         }
 
         return *this;
@@ -221,9 +218,11 @@ namespace mtm {
     template<class T>
     typename SortedList<T>::ConstIterator &
     SortedList<T>::ConstIterator::operator++() {
-        if (current_node->next == nullptr) {}
-        //throw exc
-        current_node = current_node->next;
+        if (current_node->next == nullptr || current_node == nullptr) {
+            //error handling
+        } else {
+            current_node = current_node->next;
+        }
         return *this;
     }
 
