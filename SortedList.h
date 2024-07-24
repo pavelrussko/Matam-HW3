@@ -19,10 +19,18 @@ namespace mtm {
         Node *Head;
         int size;
     public:
+
+        template<class Condition>
+        SortedList filter(Condition c) const;
+
+        template<class Reshape>
+        SortedList apply(Reshape r) const;
         SortedList();
         int length();
-        void insert(T&);
+        void insert(T &);
+
         class ConstIterator;
+
         ~SortedList();
         void Remove(ConstIterator);
         SortedList &operator=(const SortedList &list);
@@ -47,8 +55,8 @@ namespace mtm {
          * 7. end method V
          *
          * functions:
-         * 8. insert - inserts a new element to the list - pasha
-         * 9. remove - removes an element from the list - ofek
+         * 8. insert - inserts a new element to the list - V
+         * 9. remove - removes an element from the list - V
          * 10. length - returns the number of elements in the list V
          * 11. filter - returns a new list with elements that satisfy a given condition - friendship
          * 12. apply - returns a new list with elements that were modified by an operation - friendship
@@ -60,33 +68,38 @@ namespace mtm {
     class SortedList<T>::ConstIterator {
         const SortedList<T> *list;
         Node *current_node;
-        ConstIterator(const SortedList<T>*, Node*);
+        ConstIterator(const SortedList<T> *, Node *);
         ~ConstIterator() = default;
+
         friend class SortedList<T>;
 
     public:
         ConstIterator &operator++();
         ConstIterator &operator=(const ConstIterator &Iterator) = default;
         ConstIterator(const ConstIterator &Iterator) = default;
-        bool operator!=(const ConstIterator&);
-        const T& operator*() const;
-        bool operator==(const ConstIterator&);
+        bool operator!=(const ConstIterator &);
+        const T &operator*() const;
+        bool operator==(const ConstIterator &);
 
     };
+
 
     //SortedList implementation
     template<class T>
     SortedList<T>::SortedList() : Head(new Node), size(0) {
         Head->next = nullptr;
     }
+
     template<class T>
     int SortedList<T>::length() {
         return size;
     }
+
     template<class T>
     typename SortedList<T>::ConstIterator SortedList<T>::begin() const {
         return ConstIterator(this, &Head);
     }
+
     template<class T>
     typename SortedList<T>::ConstIterator SortedList<T>::end() const {
         Node current = Head;
@@ -95,20 +108,20 @@ namespace mtm {
         }
         return ConstIterator(this, &current);
     }
+
     template<class T>
-    void SortedList<T>::insert(T& element){
-        if(size == 0){
+    void SortedList<T>::insert(T &element) {
+        if (size == 0) {
             Head->data = element;
-        }
-        else if(element >= Head->data){
+        } else if (element >= Head->data) {
             Node current = new Node(element, Head);
             Head = current;
-        }
-        else {
+        } else {
             Node current = new Node(element);
 
             SortedList<T>::ConstIterator it = begin();
-            while (it.current_node->next > element || it.current_node->next == nullptr) {
+            while (it.current_node->next > element ||
+                   it.current_node->next == nullptr) {
                 it++;
             }
             current.next = it.current_node.next;
@@ -116,6 +129,7 @@ namespace mtm {
             size++;
         }
     }
+
     template<class T>
     void SortedList<T>::Remove(SortedList::ConstIterator iterator) {
         if (Head == nullptr || iterator.current_node == nullptr) {
@@ -142,6 +156,7 @@ namespace mtm {
             size--;
         }
     }
+
     template<class T>
     SortedList<T>::~SortedList() {
         while (Head != nullptr) {
@@ -151,31 +166,28 @@ namespace mtm {
         }
     }
 
+    template<class T>
+    template<class Condition>
+    SortedList<T> SortedList<T>::filter(Condition c) const {
+        SortedList filtered;
+        for (const T &element: *this) {
+            if (c(element)) {
+                filtered.insert(element);
+            }
+        }
+        return filtered;
+    }
 
-    //Iterator implementation
     template<class T>
-    SortedList<T>::ConstIterator::ConstIterator(const SortedList<T>* list, Node *current) :
-            list(list),
-            current_node(current) {}
-    template<class T>
-    typename SortedList<T>::ConstIterator& SortedList<T>::ConstIterator::operator++() {
-        if (current_node->next == nullptr) {}
-        //throw exc
-        current_node = current_node->next;
-        return *this;
+    template<class Reshape>
+    SortedList<T> SortedList<T>::apply(Reshape r) const {
+        SortedList reshaped(*this);
+        for (const T &element: reshaped) {
+            element = r(element);
+        }
+        return reshaped;
     }
-    template<class T>
-    bool SortedList<T>::ConstIterator::operator!=(const ConstIterator &Iterator) {
-        return !(*this == Iterator);
-    }
-    template<class T>
-    const T& SortedList<T>::ConstIterator::operator*() const {
-        return current_node->data;
-    }
-    template<class T>
-    bool SortedList<T>::ConstIterator::operator==(const ConstIterator &Iterator) {
-        return (current_node == Iterator.current_node);
-    }
+
     template<class T>
     SortedList<T> &SortedList<T>::operator=(const SortedList &list) {
         if (this == &list) {
@@ -196,6 +208,40 @@ namespace mtm {
         }
 
         return *this;
+    }
+
+
+    //Iterator implementation
+    template<class T>
+    SortedList<T>::ConstIterator::ConstIterator(const SortedList<T> *list,
+                                                Node *current) :
+            list(list),
+            current_node(current) {}
+
+    template<class T>
+    typename SortedList<T>::ConstIterator &
+    SortedList<T>::ConstIterator::operator++() {
+        if (current_node->next == nullptr) {}
+        //throw exc
+        current_node = current_node->next;
+        return *this;
+    }
+
+    template<class T>
+    bool
+    SortedList<T>::ConstIterator::operator!=(const ConstIterator &Iterator) {
+        return !(*this == Iterator);
+    }
+
+    template<class T>
+    const T &SortedList<T>::ConstIterator::operator*() const {
+        return current_node->data;
+    }
+
+    template<class T>
+    bool
+    SortedList<T>::ConstIterator::operator==(const ConstIterator &Iterator) {
+        return (current_node == Iterator.current_node);
     }
 
 }
