@@ -10,7 +10,7 @@ namespace mtm {
     private:
         struct Node {
             T data;
-            Node *next;
+            Node* next;
 
             Node(const T &data = T(), Node *next = nullptr) : data(
                     data), next(next) {}
@@ -67,8 +67,8 @@ namespace mtm {
     template<class T>
     class SortedList<T>::ConstIterator {
         const SortedList<T> *list;
-        const Node *current_node;
-        ConstIterator(const SortedList<T> *, Node *);
+        Node* current_node;
+        ConstIterator(const SortedList<T>*, Node*);
 
         friend class SortedList<T>;
 
@@ -110,15 +110,15 @@ namespace mtm {
         if (size == 0 || element > Head->data) {
             Head = new Node(element, Head);
         } else {
-            Node current(element);
+            Node current(element, nullptr);
             SortedList<T>::ConstIterator it = SortedList::begin();
 
             while (it.current_node->next->data > element ||
                    it.current_node->next != nullptr) {
                 ++it;
             }
-            current.next = it.current_node.next;
-            it.current_node->next = current;
+            current.next = it.current_node->next;
+            it.current_node->next = &current;
             size++;
         }
     }
