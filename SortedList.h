@@ -15,28 +15,14 @@ namespace mtm {
         Node *Head;
         int size;
     public:
-        SortedList() : Head(new Node), size(0) {
-            Head->next = nullptr;
-        }
-
-        int length() {
-            return size;
-        }
-
+        SortedList();
+        int length();
+        void insert(T&);
 
         class ConstIterator;
+        ConstIterator begin() const;
+        ConstIterator end() const;
 
-        ConstIterator begin() const {
-            return ConstIterator(this, &Head);
-        }
-
-        ConstIterator end() const {
-            Node current = Head;
-            for (int i = 0; i < size; ++i) {
-                current = current.next;
-            }
-            return ConstIterator(this, &current);
-        }
         /**
          *
          * the class should support the following public interface:
@@ -67,54 +53,91 @@ namespace mtm {
     class SortedList<T>::ConstIterator {
         const SortedList<T> *list;
         Node *current_node;
-
-        ConstIterator(const SortedList<T> *list, Node *current) :
-                list(list),
-                current_node(current) {}
-
+        ConstIterator(const SortedList<T>*, Node*);
         ~ConstIterator() = default;
-
         friend class SortedList<T>;
 
     public:
-        ConstIterator &operator++() {
-            if (current_node->next == nullptr) {}
-            //throw exc
-            current_node = current_node->next;
-            return *this;
-        }
-
+        ConstIterator &operator++();
         ConstIterator &operator=(const ConstIterator &Iterator) = default;
         ConstIterator(const ConstIterator &Iterator) = default;
+        bool operator!=(const ConstIterator&);
+        const T& operator*() const;
+        bool operator==(const ConstIterator&);
 
-        bool operator!=(const ConstIterator &Iterator) {
-            return !(*this == Iterator);
-        }
-
-        const T &operator*() const {
-            return current_node->data;
-        }
-
-        bool operator==(const ConstIterator &Iterator) {
-            return (current_node == Iterator.current_node);
-        }
-        /**
-         * the class should support the following public interface:
-         * if needed, use =defualt / =delete
-         *
-         * constructors and destructor:
-         * 1. a ctor(or ctors) your implementation needs V
-         * 2. copy constructor V
-         * 3. operator= - assignment operator V
-         * 4. ~ConstIterator() - destructor V
-         *
-         * operators:
-         * 5. operator* - returns the element the iterator points to V
-         * 6. operator++ - advances the iterator to the next element V
-         * 7. operator!= - returns true if the iterator points to a different element V
-         *
-         */
     };
+
+    //SortedList implementation
+    template<class T>
+    SortedList<T>::SortedList() : Head(new Node), size(0) {
+        Head->next = nullptr;
+    }
+    template<class T>
+    int SortedList<T>::length() {
+        return size;
+    }
+    template<class T>
+    typename SortedList<T>::ConstIterator SortedList<T>::begin() const {
+        return ConstIterator(this, &Head);
+    }
+    template<class T>
+    typename SortedList<T>::ConstIterator SortedList<T>::end() const {
+        Node current = Head;
+        for (int i = 0; i < size; ++i) {
+            current = current.next;
+        }
+        return ConstIterator(this, &current);
+    }
+    template<class T>
+    void SortedList<T>::insert(T& element){
+        if(size == 0){
+            Head->data = element;
+        }
+        else if(element >= Head->data){
+            Node current = new Node(element, Head);
+            Head = current;
+        }
+        else {
+            Node current = new Node(element);
+
+            SortedList<T>::ConstIterator it = begin();
+            while (it.current_node->next > element || it.current_node->next == nullptr) {
+                it++;
+            }
+            current.next = it.current_node.next;
+            it.current_node->next = current;
+            size++;
+        }
+    }
+
+
+
+    //Iterator implementation
+    template<class T>
+    SortedList<T>::ConstIterator::ConstIterator(const SortedList<T>* list, Node *current) :
+            list(list),
+            current_node(current) {}
+    template<class T>
+    typename SortedList<T>::ConstIterator& SortedList<T>::ConstIterator::operator++() {
+        if (current_node->next == nullptr) {}
+        //throw exc
+        current_node = current_node->next;
+        return *this;
+    }
+    template<class T>
+    bool SortedList<T>::ConstIterator::operator!=(const ConstIterator &Iterator) {
+        return !(*this == Iterator);
+    }
+    template<class T>
+    const T& SortedList<T>::ConstIterator::operator*() const {
+        return current_node->data;
+    }
+    template<class T>
+    bool SortedList<T>::ConstIterator::operator==(const ConstIterator &Iterator) {
+        return (current_node == Iterator.current_node);
+    }
+
+
 }
 
 
