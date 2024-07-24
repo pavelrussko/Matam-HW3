@@ -116,7 +116,40 @@ namespace mtm {
             size++;
         }
     }
+    template<class T>
+    void SortedList<T>::Remove(SortedList::ConstIterator iterator) {
+        if (Head == nullptr || iterator.current_node == nullptr) {
+            //error handling
+        }
 
+        if (Head == iterator.current_node) {
+            Node *temp = Head;
+            Head = Head->next;
+            delete temp;
+            size--;
+        }
+
+        Node *current = Head;
+        while (current->next != nullptr &&
+               current->next != iterator.current_node) {
+            current = current->next;
+        }
+
+        if (current->next == iterator.current_node) {
+            Node *temp = current->next;
+            current->next = current->next->next;
+            delete temp;
+            size--;
+        }
+    }
+    template<class T>
+    SortedList<T>::~SortedList() {
+        while (Head != nullptr) {
+            Node *temp = Head;
+            Head = Head->next;
+            delete temp;
+        }
+    }
 
 
     //Iterator implementation
@@ -143,48 +176,6 @@ namespace mtm {
     bool SortedList<T>::ConstIterator::operator==(const ConstIterator &Iterator) {
         return (current_node == Iterator.current_node);
     }
-
-
-}
-        ConstIterator &operator++() {
-            if (current_node->next == nullptr) {}
-            //throw exc
-            current_node = current_node->next;
-            return *this;
-        }
-
-        ConstIterator &operator=(const ConstIterator &Iterator) = default;
-        ConstIterator(const ConstIterator &Iterator) = default;
-
-        bool operator!=(const ConstIterator &Iterator) {
-            return !(*this == Iterator);
-        }
-
-        const T &operator*() const {
-            return current_node->data;
-        }
-
-        bool operator==(const ConstIterator &Iterator) {
-            return (current_node == Iterator.current_node);
-        }
-        /**
-         * the class should support the following public interface:
-         * if needed, use =defualt / =delete
-         *
-         * constructors and destructor:
-         * 1. a ctor(or ctors) your implementation needs V
-         * 2. copy constructor V
-         * 3. operator= - assignment operator V
-         * 4. ~ConstIterator() - destructor V
-         *
-         * operators:
-         * 5. operator* - returns the element the iterator points to V
-         * 6. operator++ - advances the iterator to the next element V
-         * 7. operator!= - returns true if the iterator points to a different element V
-         *
-         */
-    };
-
     template<class T>
     SortedList<T> &SortedList<T>::operator=(const SortedList &list) {
         if (this == &list) {
@@ -207,39 +198,4 @@ namespace mtm {
         return *this;
     }
 
-    template<class T>
-    SortedList<T>::~SortedList() {
-        while (Head != nullptr) {
-            Node *temp = Head;
-            Head = Head->next;
-            delete temp;
-        }
-    }
-
-    template<class T>
-    void SortedList<T>::Remove(ConstIterator iterator) {
-        if (Head == nullptr || iterator.current_node == nullptr) {
-            //error handling
-        }
-
-        if (Head == iterator.current_node) {
-            Node *temp = Head;
-            Head = Head->next;
-            delete temp;
-            size--;
-        }
-
-        Node *current = Head;
-        while (current->next != nullptr &&
-               current->next != iterator.current_node) {
-            current = current->next;
-        }
-
-        if (current->next == iterator.current_node) {
-            Node *temp = current->next;
-            current->next = current->next->next;
-            delete temp;
-            size--;
-        }
-    }
 }
