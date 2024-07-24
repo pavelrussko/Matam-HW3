@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include "Person.h"
 #include "Task.h"
 
 /**
@@ -11,8 +12,9 @@ private:
     /**
      * @brief Maximum number of persons the TaskManager can handle.
      */
+    int peopleSize;
     static const int MAX_PERSONS = 10;
-
+    Person *people[MAX_PERSONS];
     // Note - Additional private fields and methods can be added if needed.
 
 public:

@@ -12,7 +12,7 @@ namespace mtm {
             T data;
             Node *next;
 
-            explicit Node(const T &data = T(), Node *next = nullptr) : data(
+            Node(const T &data = T(), Node *next = nullptr) : data(
                     data), next(next) {}
         };
 
@@ -26,13 +26,13 @@ namespace mtm {
         template<class Reshape>
         SortedList apply(Reshape r) const;
         SortedList();
-        int length();
+        int length() const;
         void insert(const T &);
 
         class ConstIterator;
 
         ~SortedList();
-        void Remove(ConstIterator);
+        void remove(ConstIterator);
         SortedList &operator=(const SortedList &list);
 
         ConstIterator begin() const;
@@ -67,13 +67,13 @@ namespace mtm {
     template<class T>
     class SortedList<T>::ConstIterator {
         const SortedList<T> *list;
-        Node *current_node;
+        const Node *current_node;
         ConstIterator(const SortedList<T> *, Node *);
-        ~ConstIterator() = default;
 
         friend class SortedList<T>;
 
     public:
+        ~ConstIterator() = default;
         ConstIterator &operator++();
         ConstIterator &operator=(const ConstIterator &Iterator) = default;
         ConstIterator(const ConstIterator &Iterator) = default;
@@ -91,7 +91,7 @@ namespace mtm {
     }
 
     template<class T>
-    int SortedList<T>::length() {
+    int SortedList<T>::length() const {
         return size;
     }
 
@@ -107,18 +107,15 @@ namespace mtm {
 
     template<class T>
     void SortedList<T>::insert(const T &element) {
-        if (size == 0) {
-            Head->data = element;
-        } else if (element >= Head->data) {
-            Node current = new Node(element, Head);
-            Head = current;
+        if (size == 0 || element > Head->data) {
+            Head = new Node(element, Head);
         } else {
-            Node current = new Node(element);
+            Node current(element);
+            SortedList<T>::ConstIterator it = SortedList::begin();
 
-            SortedList<T>::ConstIterator it = begin();
-            while (it.current_node->next > element ||
-                   it.current_node->next == nullptr) {
-                it++;
+            while (it.current_node->next->data > element ||
+                   it.current_node->next != nullptr) {
+                ++it;
             }
             current.next = it.current_node.next;
             it.current_node->next = current;
@@ -127,7 +124,7 @@ namespace mtm {
     }
 
     template<class T>
-    void SortedList<T>::Remove(SortedList::ConstIterator iterator) {
+    void SortedList<T>::remove(SortedList::ConstIterator iterator) {
         if (Head == nullptr || iterator.current_node == nullptr) {
             // Handle error appropriately
         }
@@ -218,11 +215,11 @@ namespace mtm {
     template<class T>
     typename SortedList<T>::ConstIterator &
     SortedList<T>::ConstIterator::operator++() {
-        if (current_node->next == nullptr || current_node == nullptr) {
-            //error handling
-        } else {
-            current_node = current_node->next;
+        if (current_node == nullptr) {
+            throw std::out_of_range(
+                    "Iterator cannot be incremented past the end.");
         }
+        current_node = current_node->next;
         return *this;
     }
 

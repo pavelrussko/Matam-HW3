@@ -1,5 +1,6 @@
-
+#include "SortedList.h"
 #include "Person.h"
+
 using std::endl;
 
 // Constructor
@@ -10,16 +11,16 @@ string Person::getName() const {
     return m_name;
 }
 
-const SortedList<Task>& Person::getTasks() const {
+const SortedList<Task> &Person::getTasks() const {
     return m_tasks;
 }
 
-void Person::setTasks(const SortedList<Task>& tasks) {
+void Person::setTasks(const SortedList<Task> &tasks) {
     m_tasks = tasks;
 }
 
 // Other methods
-void Person::assignTask(const Task& task) {
+void Person::assignTask(const Task &task) {
     m_tasks.insert(task);
 }
 
@@ -33,7 +34,7 @@ int Person::completeTask() {
     return taskId;
 }
 
-const Task& Person::getHighestPriorityTask() const {
+const Task &Person::getHighestPriorityTask() const {
     if (m_tasks.length() == 0) {
         throw std::runtime_error("No tasks assigned to this person.");
     }
@@ -41,10 +42,10 @@ const Task& Person::getHighestPriorityTask() const {
 }
 
 // Overloaded operators
-ostream& operator<<(ostream& os, const Person& person) {
+ostream &operator<<(ostream &os, const Person &person) {
     os << "Person: " << person.m_name << endl;
     // Assuming the SortedList has an appropriate method to list tasks
-    for (const Task& t: person.m_tasks) {
+    for (const Task &t: person.m_tasks) {
         os << t << endl;
     }
     return os;
