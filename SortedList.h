@@ -12,7 +12,7 @@ namespace mtm {
             T data;
             Node *next;
 
-            Node(const T &data = T(), Node *next = nullptr) : data(
+            Node(const T &data, Node *next = nullptr) : data(
                     data), next(next) {
 
             }
@@ -30,6 +30,7 @@ namespace mtm {
         template<class Reshape>
         SortedList apply(Reshape r) const;
         SortedList();
+        SortedList(const SortedList<T>&);
         int length() const;
         void insert(const T &);
 
@@ -95,8 +96,12 @@ namespace mtm {
 
     //SortedList implementation
     template<class T>
-    SortedList<T>::SortedList() : Head(nullptr), size(0) {
-        Head->next = nullptr;
+    SortedList<T>::SortedList() : Head(nullptr), size(0) {}
+    template<class T>
+    SortedList<T>::SortedList(const SortedList<T>& list): size(list.length()), Head(nullptr) {
+        for(ConstIterator it = list.begin(); it != list.end(); ++it){
+            this->insert(*it);
+        }
     }
 
     template<class T>
@@ -118,12 +123,13 @@ namespace mtm {
     void SortedList<T>::insert(const T &element) {
         if (size == 0 || element > Head->data) {
             Head = new Node(element, Head);
+            size++;
         } else {
             Node current(element, nullptr);
             SortedList<T>::ConstIterator it = SortedList::begin();
 
-            while (it.current_node->next->data > element ||
-                   it.current_node->next != nullptr) {
+            while (it.current_node->next != nullptr
+            && it.current_node->next->data > element) {
                 ++it;
             }
             current.next = it.current_node->next;
@@ -203,7 +209,7 @@ namespace mtm {
         if (this == &list) {
             return *this;
         }
-        while (Head != nullptr) {
+        while (Head != nullptr)  {
             Node *temp = Head;
             Head = Head->next;
             delete temp;

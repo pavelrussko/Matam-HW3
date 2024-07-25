@@ -15,7 +15,7 @@ private:
     int peopleSize;
     int task_counter;
     static const int MAX_PERSONS = 10;
-    Person *people[MAX_PERSONS];
+    Person** people;
 
     // Note - Additional private fields and methods can be added if needed.
 
