@@ -9,7 +9,7 @@ void TaskManager::assignTask(const string &personName,
                              const Task &task) {//check for memory leak here since im making a new object
     Task newTask(task);
     if (task.getPriority() < 0 || task.getPriority() > 100) {
-        //error handling
+        throw "priroity should only be between 0 and 100";
     }
     for (int i = 0; i < peopleSize; ++i) {
         if (personName == people[i]->getName()) {
@@ -20,7 +20,7 @@ void TaskManager::assignTask(const string &personName,
         }
     }
     if (peopleSize == 10) {
-        //return error
+        throw std::runtime_error("Reached maximum amount of people");
     } else {
         Person new_man(personName);
         people[peopleSize] = &new_man;
@@ -32,7 +32,12 @@ void TaskManager::completeTask(const string &personName) {
     //need to add try and catch for when complete task throws an exception
     for (int i = 0; i < peopleSize; ++i) {
         if (personName == people[i]->getName()) {
-            people[i]->completeTask();
+            try {
+                people[i]->completeTask();
+            }
+            catch (runtime_error &error) {
+                break;
+            }
         }
     }
 }

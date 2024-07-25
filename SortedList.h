@@ -10,10 +10,14 @@ namespace mtm {
     private:
         struct Node {
             T data;
-            Node* next;
+            Node *next;
 
             Node(const T &data = T(), Node *next = nullptr) : data(
-                    data), next(next) {}
+                    data), next(next) {
+
+            }
+
+            bool operator==(const Node &node);
         };
 
         Node *Head;
@@ -58,17 +62,22 @@ namespace mtm {
          * 8. insert - inserts a new element to the list - V
          * 9. remove - removes an element from the list - V
          * 10. length - returns the number of elements in the list V
-         * 11. filter - returns a new list with elements that satisfy a given condition - friendship
-         * 12. apply - returns a new list with elements that were modified by an operation - friendship
+         * 11. filter - returns a new list with elements that satisfy a given condition - V
+         * 12. apply - returns a new list with elements that were modified by an operation - V
          */
 
     };
 
+    template<typename T>
+    bool SortedList<T>::Node::operator==(const Node &node) {
+        return data == node.data;
+    }
+
     template<class T>
     class SortedList<T>::ConstIterator {
         const SortedList<T> *list;
-        Node* current_node;
-        ConstIterator(const SortedList<T>*, Node*);
+        Node *current_node;
+        ConstIterator(const SortedList<T> *, Node *);
 
         friend class SortedList<T>;
 
@@ -126,7 +135,7 @@ namespace mtm {
     template<class T>
     void SortedList<T>::remove(SortedList::ConstIterator iterator) {
         if (Head == nullptr || iterator.current_node == nullptr) {
-            // Handle error appropriately
+            throw std::runtime_error("The sortedList is empty");
         }
 
         if (Head == iterator.current_node) {
@@ -163,6 +172,9 @@ namespace mtm {
     template<class T>
     template<class Condition>
     SortedList<T> SortedList<T>::filter(Condition c) const {
+        if (Head == nullptr) {
+            throw std::runtime_error("SortedList is empty, cant apply filter");
+        }
         SortedList filtered;
         for (ConstIterator it = begin(); it != end(); ++it) {
             if (c(*it)) {
@@ -175,6 +187,9 @@ namespace mtm {
     template<class T>
     template<class Reshape>
     SortedList<T> SortedList<T>::apply(Reshape r) const {
+        if (Head == nullptr) {
+            throw std::runtime_error("SortedList is empty, cant use apply");
+        }
         SortedList reshaped;
         for (ConstIterator it = begin(); it != end(); ++it) {
             reshaped.insert(r(*it));
@@ -184,10 +199,10 @@ namespace mtm {
 
     template<class T>
     SortedList<T> &SortedList<T>::operator=(const SortedList &list) {
+        //maybe add throw for when list is empty
         if (this == &list) {
             return *this;
         }
-
         while (Head != nullptr) {
             Node *temp = Head;
             Head = Head->next;
@@ -239,5 +254,6 @@ namespace mtm {
     SortedList<T>::ConstIterator::operator==(const ConstIterator &Iterator) {
         return (current_node == Iterator.current_node);
     }
+
 
 }
