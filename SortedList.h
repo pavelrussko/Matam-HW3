@@ -129,8 +129,12 @@ namespace mtm {
 
     template<class T>
     void SortedList<T>::remove(SortedList::ConstIterator iterator) {
-        if (Head == nullptr || iterator.current_node == nullptr) {
+        if (Head == nullptr) {
             throw std::runtime_error("The sortedList is empty");
+        }
+
+        if (iterator.current_node == nullptr) {
+            return;
         }
 
         if (Head == iterator.current_node) {
@@ -153,6 +157,7 @@ namespace mtm {
             size--;
         }
     }
+
 
     template<class T>
     SortedList<T>::~SortedList() {
