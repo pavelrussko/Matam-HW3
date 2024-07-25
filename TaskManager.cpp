@@ -27,10 +27,16 @@ void TaskManager::assignTask(const string &personName,
     if (peopleSize == 10) {
         throw std::runtime_error("Reached maximum amount of people");
     } else {
-        Person new_man(personName);
-        people[peopleSize] = &new_man;
+        people[peopleSize] = new Person(personName);
         peopleSize++;
     }
+}
+
+TaskManager::~TaskManager() {
+    for (int i = 0; i < peopleSize; ++i) {
+        delete people[i];
+    }
+    delete[] people;
 }
 
 void TaskManager::bumpPriorityByType(TaskType type, int priority) {
@@ -55,40 +61,41 @@ void TaskManager::bumpPriorityByType(TaskType type, int priority) {
 }
 
 void TaskManager::completeTask(const string &personName) {
-    //need to add try and catch for when complete task throws an exception
     for (int i = 0; i < peopleSize; ++i) {
         if (personName == people[i]->getName()) {
             try {
                 people[i]->completeTask();
             }
-            catch (runtime_error &error) {
-                break;
+            catch (const runtime_error &error) {
+                std::cerr << "Error completing task: " << error.what() << std::endl;
             }
         }
     }
 }
 
 void TaskManager::printAllEmployees() const {
-    //need to addd a throw for when there arent people or no tasks
+    if (peopleSize == 0) {
+        throw std::runtime_error("No employees available");
+    }
     for (int i = 0; i < peopleSize; ++i) {
-        cout << people[i] << endl;
+        std::cout << people[i]->getName() << std::endl;
     }
 }
 
 void TaskManager::printAllTasks() const {
-    SortedList<Task> allTasks; //need to add a throw when there are no people or such
+    if (peopleSize == 0) {
+        throw std::runtime_error("No tasks available");
+    }
+    SortedList<Task> allTasks;
     for (int i = 0; i < peopleSize; ++i) {
-        if(!people[i])
+        if (!people[i])
             continue;
         const SortedList<Task> &tasks = people[i]->getTasks();
-        for (SortedList<Task>::ConstIterator it = tasks.begin();
-             it != tasks.end(); ++it) {
+        for (SortedList<Task>::ConstIterator it = tasks.begin(); it != tasks.end(); ++it) {
             allTasks.insert(*it);
         }
     }
-
-    for (SortedList<Task>::ConstIterator it = allTasks.begin();
-         it != allTasks.end(); ++it) {
+    for (SortedList<Task>::ConstIterator it = allTasks.begin(); it != allTasks.end(); ++it) {
         std::cout << *it << std::endl;
     }
 }
