@@ -10,16 +10,14 @@ TaskManager::TaskManager():
     task_counter(0),
     people(new Person*[MAX_PERSONS]{nullptr}){}
 
-void TaskManager::assignTask(const string &personName,
-                             const Task &task) {//check for memory leak here since im making a new object
-    Task newTask(task);
+void TaskManager::assignTask(const string &personName, const Task &task) {
     if (task.getPriority() < 0 || task.getPriority() > 100) {
         throw std::runtime_error("priority should only be between 0 and 100");
     }
     for (int i = 0; i < peopleSize; ++i) {
         if (personName == people[i]->getName()) {
-
-            newTask.setId(++task_counter);
+            Task newTask = task;
+            newTask.setId(task_counter++);
             people[i]->assignTask(newTask);
             return;
         }
@@ -28,6 +26,9 @@ void TaskManager::assignTask(const string &personName,
         throw std::runtime_error("Reached maximum amount of people");
     } else {
         people[peopleSize] = new Person(personName);
+        Task newTask = task;
+        newTask.setId(task_counter++);
+        people[peopleSize]->assignTask(newTask);
         peopleSize++;
     }
 }
@@ -78,7 +79,9 @@ void TaskManager::printAllEmployees() const {
         throw std::runtime_error("No employees available");
     }
     for (int i = 0; i < peopleSize; ++i) {
-        std::cout << *people[i];
+        if (people[i] != nullptr) {
+            std::cout << *people[i] << std::endl;
+        }
     }
 }
 
