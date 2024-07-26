@@ -1,5 +1,6 @@
 #include "SortedList.h"
 #include "Person.h"
+#include "Task.h"
 
 using std::endl;
 

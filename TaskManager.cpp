@@ -78,7 +78,7 @@ void TaskManager::printAllEmployees() const {
         throw std::runtime_error("No employees available");
     }
     for (int i = 0; i < peopleSize; ++i) {
-        std::cout << people[i]->getName() << std::endl;
+        std::cout << *people[i];
     }
 }
 
