@@ -120,7 +120,7 @@ namespace mtm {
     template<class T>
     void SortedList<T>::insert(const T &element) {
         Node **current = &Head;
-        while (*current != nullptr && !((*current)->data > element)) {
+        while (*current != nullptr && (*current)->data > element) {
             current = &(*current)->next;
         }
         *current = new Node(element, *current);

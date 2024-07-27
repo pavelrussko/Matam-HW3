@@ -94,8 +94,8 @@ void TaskManager::printAllTasks() const {
         if (!people[i])
             continue;
         const SortedList<Task> &tasks = people[i]->getTasks();
-        for (SortedList<Task>::ConstIterator it = tasks.begin(); it != tasks.end(); ++it) {
-            allTasks.insert(*it);
+        for (const Task& task : tasks) {
+            allTasks.insert(task);
         }
     }
     for (SortedList<Task>::ConstIterator it = allTasks.begin(); it != allTasks.end(); ++it) {
@@ -109,9 +109,11 @@ void TaskManager::printTasksByType(TaskType type) const {
             continue;
         const SortedList<Task>& tasks = people[i]->getTasks();
         for(const Task& task : tasks){
-            Task temp(task.getPriority(), type, task.getDescription());
-            temp.setId(task.getId());
-            tasks_by_type.insert(temp);
+            if(task.getType() == type) {
+                Task temp(task.getPriority(), type, task.getDescription());
+                temp.setId(task.getId());
+                tasks_by_type.insert(temp);
+            }
         }
     }
     for(const Task& task : tasks_by_type){
