@@ -41,6 +41,9 @@ TaskManager::~TaskManager() {
 }
 
 void TaskManager::bumpPriorityByType(TaskType type, int priority) {
+    if (priority < 0) {
+        return;
+    }
     for (int i = 0; i < peopleSize; ++i) {
         if (people[i] == nullptr) {
             continue;
@@ -67,13 +70,7 @@ void TaskManager::bumpPriorityByType(TaskType type, int priority) {
 void TaskManager::completeTask(const string &personName) {
     for (int i = 0; i < peopleSize; ++i) {
         if (personName == people[i]->getName()) {
-            try {
-                people[i]->completeTask();
-            }
-            catch (const runtime_error &error) {
-                std::cerr << "Error completing task: " << error.what()
-                          << std::endl;
-            }
+            people[i]->completeTask();
         }
     }
 }
@@ -103,7 +100,7 @@ void TaskManager::printAllTasks() const {
             allTasks.insert(task);
         }
     }
-    for (const Task& allTask : allTasks) {
+    for (const Task &allTask: allTasks) {
         std::cout << allTask << std::endl;
     }
 }
