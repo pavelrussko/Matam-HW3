@@ -103,7 +103,7 @@ void TaskManager::printAllTasks() const {
             allTasks.insert(task);
         }
     }
-    for (const Task &allTask: allTasks) {
+    for (const Task& allTask : allTasks) {
         std::cout << allTask << std::endl;
     }
 }
