@@ -98,8 +98,8 @@ void TaskManager::printAllTasks() const {
             allTasks.insert(task);
         }
     }
-    for (SortedList<Task>::ConstIterator it = allTasks.begin(); it != allTasks.end(); ++it) {
-        std::cout << *it << std::endl;
+    for (const Task& allTask : allTasks) {
+        std::cout << allTask << std::endl;
     }
 }
 void TaskManager::printTasksByType(TaskType type) const {
