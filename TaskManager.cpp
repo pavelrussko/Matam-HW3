@@ -11,9 +11,6 @@ TaskManager::TaskManager() :
         people(new Person *[MAX_PERSONS]{nullptr}) {}
 
 void TaskManager::assignTask(const string &personName, const Task &task) {
-    if (task.getPriority() < 0 || task.getPriority() > 100) {
-        throw std::runtime_error("priority should only be between 0 and 100");
-    }
     for (int i = 0; i < peopleSize; ++i) {
         if (personName == people[i]->getName()) {
             Task newTask = task;

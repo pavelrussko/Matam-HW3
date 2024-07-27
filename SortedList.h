@@ -121,17 +121,17 @@ namespace mtm {
 
     template<class T>
     void SortedList<T>::insert(const T &element) {
+        Node *newNode = new Node(element);
         if (Head == nullptr || element > Head->data) {
-            Node temp(element, Head);
-            Head = &temp;
+            newNode->next = Head;
+            Head = newNode;
         } else {
-            Node temp(element);
             Node *current = Head;
             while (current->next != nullptr && current->next->data > element) {
                 current = current->next;
             }
-            temp.next = current->next;
-            current->next = &temp;
+            newNode->next = current->next;
+            current->next = newNode;
         }
         size++;
     }
