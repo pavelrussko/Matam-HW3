@@ -26,7 +26,6 @@ public:
      * Note - you may add =default if needed.
      */
     TaskManager();
-    ~TaskManager();
     /**
      * @brief Deleted copy constructor to prevent copying of TaskManager objects.
      */
