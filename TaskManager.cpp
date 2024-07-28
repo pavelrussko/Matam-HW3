@@ -30,13 +30,6 @@ void TaskManager::assignTask(const string &personName, const Task &task) {
     }
 }
 
-TaskManager::~TaskManager() {
-    for (int i = 0; i < peopleSize; ++i) {
-        delete people[i];
-    }
-    delete[] people;
-}
-
 void TaskManager::bumpPriorityByType(TaskType type, int priority) {
     if (priority < 0) {
         return;
