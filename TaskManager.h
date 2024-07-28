@@ -15,7 +15,7 @@ private:
     int peopleSize;
     int task_counter;
     static const int MAX_PERSONS = 10;
-    Person** people;
+    Person people[10];
 
     // Note - Additional private fields and methods can be added if needed.
 
@@ -26,7 +26,7 @@ public:
      * Note - you may add =default if needed.
      */
     TaskManager();
-    ~TaskManager();
+//    ~TaskManager();
     /**
      * @brief Deleted copy constructor to prevent copying of TaskManager objects.
      */
